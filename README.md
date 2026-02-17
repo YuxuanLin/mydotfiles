@@ -1,13 +1,17 @@
 # My Dotfiles
-This directory stores the real shell config files and keeps `~/.zshrc` as a tiny bootstrap loader.
 
-## Concept
-- Keep `~/.zshrc` minimal and stable.
-- Put the actual zsh configuration in `~/.mydotfiles/zshrc`.
-- Let `~/.zshrc` source that file at shell startup.
-- Version-control files under `~/.mydotfiles` with git.
-
-Current bootstrap line in `~/.zshrc`:
+Personal macOS configurations. Clone once, run the installer, done. 
 
 ```sh
-[ -f "$HOME/.mydotfiles/zshrc" ] && source "$HOME/.mydotfiles/zshrc"
+git clone git@github.com:YuxuanLin/mydotfiles.git ~/source/mydotfiles && ~/source/mydotfiles/install.sh
+```
+
+## Managed Configurations 
+
+| App | Config |
+|-----|--------|  
+| Zsh | `configuration/zsh/zshrc` |
+| Git | `configuration/git/gitconfig` |
+| iTerm2 | `configuration/iterm2/` |
+
+The installer is idempotent — safe to re-run.

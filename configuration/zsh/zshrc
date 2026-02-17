@@ -3,7 +3,7 @@ export PATH=$HOME/source/install:/usr/local/bin:$PATH
 # /usr/local/opt/gnu-sed/libexec/gnubin:
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/linyuxuan/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -91,6 +91,8 @@ zstyle :bracketed-paste-magic paste-finish pastefinish
 
 source $ZSH/oh-my-zsh.sh
 
+PROMPT='%F{green}%n@%m%f %F{cyan}%~%f$(git_prompt_info) '
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -128,7 +130,7 @@ export LANG=C
 export LC_ALL=en_IN.UTF-8
 export LANG=en_IN.UTF-8
 
-[ -f "/Users/linyuxuan/.ghcup/env" ] && . "/Users/linyuxuan/.ghcup/env" # ghcup-env
+[ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -156,5 +158,6 @@ load-nvmrc() {
 }
 
 add-zsh-hook chpwd load-nvmrc
-load-nvmrcexport PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+load-nvmrc
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
