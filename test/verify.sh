@@ -46,6 +46,8 @@ check "test -d \$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"      "zsh-a
 check "test -d \$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"  "zsh-syntax-highlighting installed"
 check "test -d \$HOME/.nvm"                                               "nvm installed"
 check "command -v nvim"                                                    "Neovim installed"
+check "command -v fd"                                                      "fd installed"
+check "command -v rg"                                                      "ripgrep installed"
 check "test -d \$HOME/.config/nvim && test -f \$HOME/.config/nvim/init.lua" "LazyVim starter installed"
 check "command -v lazygit"                                                 "lazygit installed"
 

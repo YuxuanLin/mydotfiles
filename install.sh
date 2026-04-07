@@ -120,13 +120,27 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Neovim
+# Neovim and dependencies
 # ---------------------------------------------------------------------------
 if command -v nvim &>/dev/null; then
     ok "Neovim already installed"
 else
     info "Installing Neovim…"
     brew install neovim
+fi
+
+if command -v fd &>/dev/null; then
+    ok "fd already installed"
+else
+    info "Installing fd…"
+    brew install fd
+fi
+
+if command -v rg &>/dev/null; then
+    ok "ripgrep already installed"
+else
+    info "Installing ripgrep…"
+    brew install ripgrep
 fi
 
 # ---------------------------------------------------------------------------
