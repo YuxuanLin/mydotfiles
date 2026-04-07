@@ -165,15 +165,6 @@ backup_to_local "$HOME/.gitconfig"   "$HOME/.gitconfig.local"
 ln -sfn "$DOTFILES_DIR/configuration/git/gitconfig" "$HOME/.gitconfig"
 ok "Linked gitconfig → ~/.gitconfig"
 
-# lazygit — back up existing config, then symlink
-mkdir -p "$HOME/.config"
-if [ -d "$HOME/.config/lazygit" ] && [ ! -L "$HOME/.config/lazygit" ]; then
-    mv "$HOME/.config/lazygit" "$HOME/.config/lazygit.local"
-    ok "Backed up ~/.config/lazygit → ~/.config/lazygit.local"
-fi
-ln -sfn "$DOTFILES_DIR/configuration/lazygit" "$HOME/.config/lazygit"
-ok "Linked lazygit → ~/.config/lazygit"
-
 # ---------------------------------------------------------------------------
 # iTerm2 preferences (macOS only)
 # ---------------------------------------------------------------------------
