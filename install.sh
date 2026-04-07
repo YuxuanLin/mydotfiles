@@ -166,16 +166,5 @@ ln -sfn "$DOTFILES_DIR/configuration/git/gitconfig" "$HOME/.gitconfig"
 ok "Linked gitconfig → ~/.gitconfig"
 
 # ---------------------------------------------------------------------------
-# iTerm2 preferences (macOS only)
-# ---------------------------------------------------------------------------
-if [ "$OS" = "macos" ] && [ -d "/Applications/iTerm.app" ]; then
-    info "Configuring iTerm2 to load preferences from dotfiles…"
-    defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
-    defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$DOTFILES_DIR/configuration/iterm2"
-    defaults write com.googlecode.iterm2 NoSyncNeverRemindPrefsChangesLostForFile_selection -int 2
-    ok "iTerm2 will load preferences from $DOTFILES_DIR/configuration/iterm2"
-fi
-
-# ---------------------------------------------------------------------------
 echo ""
 ok "All done! Open a new terminal or run: source ~/.zshrc"
