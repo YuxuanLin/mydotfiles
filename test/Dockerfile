@@ -3,7 +3,7 @@ FROM ubuntu:24.04
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -qq && apt-get install -y -qq \
-    sudo curl git ca-certificates locales file build-essential procps \
+    sudo curl git ca-certificates locales file build-essential procps fontconfig \
     && locale-gen en_US.UTF-8
 
 ENV LANG=en_US.UTF-8
