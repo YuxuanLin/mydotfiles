@@ -161,3 +161,13 @@ add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+
+# bun completions
+[ -s "/Users/linyuxuan/.bun/_bun" ] && source "/Users/linyuxuan/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Source machine-local overrides (backed up from pre-dotfiles ~/.zshrc)
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"

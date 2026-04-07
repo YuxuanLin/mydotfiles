@@ -8,6 +8,17 @@ ok()    { printf "\033[1;32m==> %s\033[0m\n" "$1"; }
 warn()  { printf "\033[1;33m==> %s\033[0m\n" "$1"; }
 err()   { printf "\033[1;31m==> %s\033[0m\n" "$1"; }
 
+# Back up a file to its .local variant before symlinking.
+# Skips if the file doesn't exist, is already a symlink (previous install),
+# or the .local file already exists (don't overwrite a prior backup).
+backup_to_local() {
+    local src="$1" dst="$2"
+    if [ -f "$src" ] && [ ! -L "$src" ] && [ ! -f "$dst" ]; then
+        cp "$src" "$dst"
+        ok "Backed up $src → $dst"
+    fi
+}
+
 # ---------------------------------------------------------------------------
 # OS detection
 # ---------------------------------------------------------------------------
@@ -109,7 +120,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Neovim + LazyVim
+# Neovim
 # ---------------------------------------------------------------------------
 if command -v nvim &>/dev/null; then
     ok "Neovim already installed"
@@ -118,39 +129,50 @@ else
     brew install neovim
 fi
 
-if [ -d "$HOME/.config/nvim/.lazyvim.json" ] || [ -f "$HOME/.config/nvim/lazyvim.json" ]; then
+# ---------------------------------------------------------------------------
+# LazyVim
+# ---------------------------------------------------------------------------
+if [ -d "$HOME/.config/nvim" ]; then
     ok "LazyVim already installed"
 else
-    info "Installing LazyVim starter…"
-    # Back up existing nvim config if present
-    [ -d "$HOME/.config/nvim" ] && mv "$HOME/.config/nvim" "$HOME/.config/nvim.bak.$$"
+    info "Installing LazyVim…"
     git clone https://github.com/LazyVim/starter "$HOME/.config/nvim"
-    # Remove starter's .git so it doesn't conflict with user customizations
     rm -rf "$HOME/.config/nvim/.git"
 fi
 
 # ---------------------------------------------------------------------------
-# Symlinks
+# lazygit
+# ---------------------------------------------------------------------------
+if command -v lazygit &>/dev/null; then
+    ok "lazygit already installed"
+else
+    info "Installing lazygit…"
+    brew install lazygit
+fi
+
+# ---------------------------------------------------------------------------
+# Symlinks — back up existing configs to .local variants before overwriting.
+# Each managed config file sources/includes its .local counterpart, so any
+# prior user customizations are preserved automatically.
 # ---------------------------------------------------------------------------
 info "Creating symlinks…"
 
+backup_to_local "$HOME/.zshrc"       "$HOME/.zshrc.local"
 ln -sfn "$DOTFILES_DIR/configuration/zsh/zshrc" "$HOME/.zshrc"
 ok "Linked zshrc → ~/.zshrc"
 
-ln -sfn "$DOTFILES_DIR/configuration/nvim/lua/config/options.lua" "$HOME/.config/nvim/lua/config/options.lua"
-ok "Linked nvim options.lua → ~/.config/nvim/lua/config/options.lua"
-
-# Capture identity before the symlink replaces ~/.gitconfig
-GIT_NAME="$(git config --global user.name 2>/dev/null || true)"
-GIT_EMAIL="$(git config --global user.email 2>/dev/null || true)"
-# Symlink overwrites ~/.gitconfig — must come after capture
+backup_to_local "$HOME/.gitconfig"   "$HOME/.gitconfig.local"
 ln -sfn "$DOTFILES_DIR/configuration/git/gitconfig" "$HOME/.gitconfig"
 ok "Linked gitconfig → ~/.gitconfig"
-# Write captured identity to ~/.gitconfig.local (created automatically by git config --file).
-# The tracked gitconfig includes this file via [include], keeping machine-specific
-# values outside version control.
-[ -n "$GIT_NAME" ]  && git config --file "$HOME/.gitconfig.local" user.name  "$GIT_NAME"
-[ -n "$GIT_EMAIL" ] && git config --file "$HOME/.gitconfig.local" user.email "$GIT_EMAIL"
+
+# lazygit — back up existing config, then symlink
+mkdir -p "$HOME/.config"
+if [ -d "$HOME/.config/lazygit" ] && [ ! -L "$HOME/.config/lazygit" ]; then
+    mv "$HOME/.config/lazygit" "$HOME/.config/lazygit.local"
+    ok "Backed up ~/.config/lazygit → ~/.config/lazygit.local"
+fi
+ln -sfn "$DOTFILES_DIR/configuration/lazygit" "$HOME/.config/lazygit"
+ok "Linked lazygit → ~/.config/lazygit"
 
 # ---------------------------------------------------------------------------
 # iTerm2 preferences (macOS only)
