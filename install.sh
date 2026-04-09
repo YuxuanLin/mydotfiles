@@ -179,6 +179,16 @@ backup_to_local "$HOME/.gitconfig"   "$HOME/.gitconfig.local"
 ln -sfn "$DOTFILES_DIR/configuration/git/gitconfig" "$HOME/.gitconfig"
 ok "Linked gitconfig → ~/.gitconfig"
 
+# Neovim — overlay our customizations on top of the LazyVim starter.
+NVIM_DIR="$HOME/.config/nvim"
+backup_to_local "$NVIM_DIR/lazyvim.json" "$NVIM_DIR/lazyvim.json.local"
+ln -sfn "$DOTFILES_DIR/configuration/nvim/lazyvim.json" "$NVIM_DIR/lazyvim.json"
+ok "Linked nvim/lazyvim.json"
+
+mkdir -p "$NVIM_DIR/lua/plugins"
+ln -sfn "$DOTFILES_DIR/configuration/nvim/lua/plugins/fzf.lua" "$NVIM_DIR/lua/plugins/fzf.lua"
+ok "Linked nvim/lua/plugins/fzf.lua"
+
 # ---------------------------------------------------------------------------
 echo ""
 ok "All done! Open a new terminal or run: source ~/.zshrc"
