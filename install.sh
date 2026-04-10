@@ -3,14 +3,14 @@ set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
 info()  { printf "\033[1;34m==> %s\033[0m\n" "$1"; }
 ok()    { printf "\033[1;32m==> %s\033[0m\n" "$1"; }
 warn()  { printf "\033[1;33m==> %s\033[0m\n" "$1"; }
 err()   { printf "\033[1;31m==> %s\033[0m\n" "$1"; }
 
-# Back up a file to its .local variant before symlinking.
-# Skips if the file doesn't exist, is already a symlink (previous install),
-# or the .local file already exists (don't overwrite a prior backup).
 backup_to_local() {
     local src="$1" dst="$2"
     if [ -f "$src" ] && [ ! -L "$src" ] && [ ! -f "$dst" ]; then
@@ -20,7 +20,7 @@ backup_to_local() {
 }
 
 # ---------------------------------------------------------------------------
-# OS detection
+# OS detection & prerequisites
 # ---------------------------------------------------------------------------
 OS="$(uname -s)"
 case "$OS" in
@@ -30,9 +30,6 @@ case "$OS" in
 esac
 info "Detected OS: $OS"
 
-# ---------------------------------------------------------------------------
-# Ubuntu prerequisites
-# ---------------------------------------------------------------------------
 if [ "$OS" = "linux" ]; then
     info "Installing Linux prerequisites…"
     sudo apt-get update -qq
@@ -55,7 +52,14 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Oh My Zsh
+# Git — config
+# ---------------------------------------------------------------------------
+backup_to_local "$HOME/.gitconfig"   "$HOME/.gitconfig.local"
+ln -sfn "$DOTFILES_DIR/configuration/git/gitconfig" "$HOME/.gitconfig"
+ok "Linked gitconfig → ~/.gitconfig"
+
+# ---------------------------------------------------------------------------
+# Zsh — install, plugins, config
 # ---------------------------------------------------------------------------
 if [ -d "$HOME/.oh-my-zsh" ]; then
     ok "Oh My Zsh already installed"
@@ -65,9 +69,6 @@ else
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
 fi
 
-# ---------------------------------------------------------------------------
-# Zsh plugins
-# ---------------------------------------------------------------------------
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
 if [ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
@@ -84,6 +85,10 @@ else
     git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
 fi
 
+backup_to_local "$HOME/.zshrc"       "$HOME/.zshrc.local"
+ln -sfn "$DOTFILES_DIR/configuration/zsh/zshrc" "$HOME/.zshrc"
+ok "Linked zshrc → ~/.zshrc"
+
 # ---------------------------------------------------------------------------
 # nvm
 # ---------------------------------------------------------------------------
@@ -95,7 +100,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Neovim and dependencies
+# Neovim — install, dependencies, config
 # ---------------------------------------------------------------------------
 if command -v nvim &>/dev/null; then
     ok "Neovim already installed"
@@ -118,10 +123,8 @@ else
     brew install ripgrep
 fi
 
-# ---------------------------------------------------------------------------
-# LazyVim — use our own config from the dotfiles repo
-# ---------------------------------------------------------------------------
 NVIM_DIR="$HOME/.config/nvim"
+mkdir -p "$HOME/.config"
 if [ -d "$NVIM_DIR" ] && [ ! -L "$NVIM_DIR" ]; then
     warn "Backing up existing nvim config to $NVIM_DIR.bak"
     mv "$NVIM_DIR" "$NVIM_DIR.bak"
@@ -143,21 +146,6 @@ else
     info "Installing lazygit…"
     brew install lazygit
 fi
-
-# ---------------------------------------------------------------------------
-# Symlinks — back up existing configs to .local variants before overwriting.
-# Each managed config file sources/includes its .local counterpart, so any
-# prior user customizations are preserved automatically.
-# ---------------------------------------------------------------------------
-info "Creating symlinks…"
-
-backup_to_local "$HOME/.zshrc"       "$HOME/.zshrc.local"
-ln -sfn "$DOTFILES_DIR/configuration/zsh/zshrc" "$HOME/.zshrc"
-ok "Linked zshrc → ~/.zshrc"
-
-backup_to_local "$HOME/.gitconfig"   "$HOME/.gitconfig.local"
-ln -sfn "$DOTFILES_DIR/configuration/git/gitconfig" "$HOME/.gitconfig"
-ok "Linked gitconfig → ~/.gitconfig"
 
 # ---------------------------------------------------------------------------
 echo ""

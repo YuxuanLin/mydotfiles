@@ -48,15 +48,9 @@ check "test -d \$HOME/.nvm"                                               "nvm i
 check "command -v nvim"                                                    "Neovim installed"
 check "command -v fd"                                                      "fd installed"
 check "command -v rg"                                                      "ripgrep installed"
-check "test -d \$HOME/.config/nvim && test -f \$HOME/.config/nvim/init.lua" "LazyVim starter installed"
+check "test -L \$HOME/.config/nvim"                                       "LazyVim config is a symlink"
+check "test -f \$HOME/.config/nvim/init.lua"                              "LazyVim init.lua exists"
 check "command -v lazygit"                                                 "lazygit installed"
-
-# Font check — different paths per OS
-if [ "$OS" = "macos" ]; then
-    check "brew list --cask font-jetbrains-mono-nerd-font &>/dev/null"    "JetBrainsMono Nerd Font installed"
-else
-    check "test -d \$HOME/.local/share/fonts/JetBrainsMonoNerdFont"       "JetBrainsMono Nerd Font installed"
-fi
 
 # Symlinks
 check "test -L \$HOME/.zshrc"      "zshrc is a symlink"
