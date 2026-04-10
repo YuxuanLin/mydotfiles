@@ -95,31 +95,6 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Fonts — JetBrainsMono Nerd Font
-# ---------------------------------------------------------------------------
-if [ "$OS" = "macos" ]; then
-    if brew list --cask font-jetbrains-mono-nerd-font &>/dev/null; then
-        ok "JetBrainsMono Nerd Font already installed"
-    else
-        info "Installing JetBrainsMono Nerd Font…"
-        brew install --cask font-jetbrains-mono-nerd-font
-    fi
-else
-    FONT_DIR="$HOME/.local/share/fonts/JetBrainsMonoNerdFont"
-    if [ -d "$FONT_DIR" ] && [ "$(ls -A "$FONT_DIR" 2>/dev/null)" ]; then
-        ok "JetBrainsMono Nerd Font already installed"
-    else
-        info "Installing JetBrainsMono Nerd Font…"
-        FONT_VERSION="3.3.0"
-        FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v${FONT_VERSION}/JetBrainsMono.tar.xz"
-        mkdir -p "$FONT_DIR"
-        curl -fsSL "$FONT_URL" | tar -xJ -C "$FONT_DIR"
-        fc-cache -f "$FONT_DIR"
-        ok "Installed JetBrainsMono Nerd Font to $FONT_DIR"
-    fi
-fi
-
-# ---------------------------------------------------------------------------
 # Neovim and dependencies
 # ---------------------------------------------------------------------------
 if command -v nvim &>/dev/null; then
@@ -144,14 +119,19 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# LazyVim
+# LazyVim — use our own config from the dotfiles repo
 # ---------------------------------------------------------------------------
-if [ -d "$HOME/.config/nvim" ]; then
-    ok "LazyVim already installed"
+NVIM_DIR="$HOME/.config/nvim"
+if [ -d "$NVIM_DIR" ] && [ ! -L "$NVIM_DIR" ]; then
+    warn "Backing up existing nvim config to $NVIM_DIR.bak"
+    mv "$NVIM_DIR" "$NVIM_DIR.bak"
+fi
+if [ ! -L "$NVIM_DIR" ]; then
+    info "Linking LazyVim config…"
+    ln -sfn "$DOTFILES_DIR/configuration/nvim" "$NVIM_DIR"
+    ok "Linked nvim config → ~/.config/nvim"
 else
-    info "Installing LazyVim…"
-    git clone https://github.com/LazyVim/starter "$HOME/.config/nvim"
-    rm -rf "$HOME/.config/nvim/.git"
+    ok "LazyVim config already linked"
 fi
 
 # ---------------------------------------------------------------------------
@@ -178,16 +158,6 @@ ok "Linked zshrc → ~/.zshrc"
 backup_to_local "$HOME/.gitconfig"   "$HOME/.gitconfig.local"
 ln -sfn "$DOTFILES_DIR/configuration/git/gitconfig" "$HOME/.gitconfig"
 ok "Linked gitconfig → ~/.gitconfig"
-
-# Neovim — overlay our customizations on top of the LazyVim starter.
-NVIM_DIR="$HOME/.config/nvim"
-backup_to_local "$NVIM_DIR/lazyvim.json" "$NVIM_DIR/lazyvim.json.local"
-ln -sfn "$DOTFILES_DIR/configuration/nvim/lazyvim.json" "$NVIM_DIR/lazyvim.json"
-ok "Linked nvim/lazyvim.json"
-
-mkdir -p "$NVIM_DIR/lua/plugins"
-ln -sfn "$DOTFILES_DIR/configuration/nvim/lua/plugins/fzf.lua" "$NVIM_DIR/lua/plugins/fzf.lua"
-ok "Linked nvim/lua/plugins/fzf.lua"
 
 # ---------------------------------------------------------------------------
 echo ""

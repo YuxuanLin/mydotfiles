@@ -1,6 +1,10 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.editor.fzf"
+    "lazyvim.plugins.extras.editor.fzf",
+    "lazyvim.plugins.extras.lang.java",
+    "lazyvim.plugins.extras.lang.typescript",
+    "lazyvim.plugins.extras.lang.typescript.oxc",
+    "lazyvim.plugins.extras.lang.typescript.vtsls"
   ],
   "install_version": 8,
   "news": {
