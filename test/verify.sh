@@ -50,11 +50,15 @@ check "command -v fd"                                                      "fd i
 check "command -v rg"                                                      "ripgrep installed"
 check "test -L \$HOME/.config/nvim"                                       "LazyVim config is a symlink"
 check "test -f \$HOME/.config/nvim/init.lua"                              "LazyVim init.lua exists"
+check "command -v tmux"                                                    "tmux installed"
+check "test -d \$HOME/.tmux/plugins/tpm"                                   "TPM installed"
+check "test -d \$HOME/.tmux/plugins/tmux-resurrect"                        "tmux-resurrect installed"
 check "command -v lazygit"                                                 "lazygit installed"
 
 # Symlinks
 check "test -L \$HOME/.zshrc"      "zshrc is a symlink"
 check "test -L \$HOME/.gitconfig"  "gitconfig is a symlink"
+check "test -L \$HOME/.tmux.conf"  "tmux.conf is a symlink"
 check "readlink \$HOME/.zshrc     | grep -q 'configuration/zsh/zshrc'"    "zshrc points to correct target"
 check "readlink \$HOME/.gitconfig | grep -q 'configuration/git/gitconfig'" "gitconfig points to correct target"
 

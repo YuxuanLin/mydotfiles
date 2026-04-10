@@ -138,6 +138,31 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# tmux — install, TPM, plugins, config
+# ---------------------------------------------------------------------------
+if command -v tmux &>/dev/null; then
+    ok "tmux already installed"
+else
+    info "Installing tmux…"
+    brew install tmux
+fi
+
+if [ -d "$HOME/.tmux/plugins/tpm" ]; then
+    ok "TPM already installed"
+else
+    info "Installing TPM (Tmux Plugin Manager)…"
+    git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+fi
+
+backup_to_local "$HOME/.tmux.conf"   "$HOME/.tmux.conf.local"
+ln -sfn "$DOTFILES_DIR/configuration/tmux/tmux.conf" "$HOME/.tmux.conf"
+ok "Linked tmux.conf → ~/.tmux.conf"
+
+# Install tmux plugins via TPM
+info "Installing tmux plugins…"
+"$HOME/.tmux/plugins/tpm/bin/install_plugins"
+
+# ---------------------------------------------------------------------------
 # lazygit
 # ---------------------------------------------------------------------------
 if command -v lazygit &>/dev/null; then
