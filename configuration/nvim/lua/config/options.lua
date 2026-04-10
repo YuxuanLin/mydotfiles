@@ -3,3 +3,4 @@
 -- Add any additional options here
 
 vim.o.autoread = true
+vim.o.wrap = true
